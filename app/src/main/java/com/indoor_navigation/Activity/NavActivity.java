@@ -1,8 +1,10 @@
 package com.indoor_navigation.Activity;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -26,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by 志豪 on 2015/7/21.
+ * Created by ??? on 2015/7/21.
  */
 public class NavActivity extends ActionBarActivity{
     private Button mBackBtn;
@@ -34,7 +36,7 @@ public class NavActivity extends ActionBarActivity{
     private Button mCamaraBtn;
     private Button mMicBtn;
     private Button mLocateBtn;
-    private Button mListBtn;
+    private Button mAddPointBtn;
     private ListView mListView;
     private List<Point>  chosePointList = new ArrayList<Point>();
 
@@ -42,17 +44,36 @@ public class NavActivity extends ActionBarActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acitivity_nav);
-
         PointAdapter pointadapter = new PointAdapter(this,
                 R.layout.point_item,chosePointList);
         mListView = (ListView) findViewById(R.id.chosepoint_list);
         mListView.setAdapter(pointadapter);
+
+        mAddPointBtn = (Button) findViewById(R.id.addpoint_btn);
+        mAddPointBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(NavActivity.this,FloorlistActivity.class);
+                startActivityForResult(intent,1);
+            }
+        });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case 1:
+                //将选择的点返回给上一个activity
+                if(resultCode == RESULT_OK){
+                    Point point = (Point)data.getSerializableExtra("point");
+                    chosePointList.add(point);
+                }
+        }
+    }
 
     private void GetLocationWithHttpURLConnection(Point point){
-
-        //子线程获取定位接口的定位信息
+        //读取从定位接口得到的json格式数据，并修改起点信息
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -111,7 +132,7 @@ public class NavActivity extends ActionBarActivity{
             double x = jsonArray.getDouble(0);
             double y = jsonArray.getDouble(1);
             int z = jsonArray.getInt(2);
-            chosePointList.get(0).setName("我的位置");
+            chosePointList.get(0).setName("???λ??");
             chosePointList.get(0).setX(x);
             chosePointList.get(0).setY(y);
             chosePointList.get(0).setZ(z);
