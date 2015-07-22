@@ -88,9 +88,9 @@ public class NavActivity extends ActionBarActivity{
                         )
                         .
 
-                                setNegativeButton("取消",new DialogInterface.OnClickListener() {
+                                setNegativeButton("取消", new DialogInterface.OnClickListener() {
                                             @Override
-                                            public void onClick (DialogInterface dialog,int which){
+                                            public void onClick(DialogInterface dialog, int which) {
                                                 dialog.cancel();
                                             }
                                         }
@@ -108,7 +108,7 @@ public class NavActivity extends ActionBarActivity{
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(NavActivity.this,FloorlistActivity.class);
-                startActivityForResult(intent,1);
+                startActivityForResult(intent, 1);
             }
         });
 
@@ -119,6 +119,25 @@ public class NavActivity extends ActionBarActivity{
             @Override
             public void onClick(View v) {
                 GetLocationWithHttpURLConnection();
+            }
+        });
+
+        //设置返回按钮
+        mBackBtn = (Button)findViewById(R.id.back_btn);
+        mBackBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        //设置导航按钮
+        mNavigateBtn = (Button)findViewById(R.id.navigation_btn);
+        mNavigateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(NavActivity.this,MapActivity.class);
+                intent.putParcelableArrayListExtra()
             }
         });
     }
