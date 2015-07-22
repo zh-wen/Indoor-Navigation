@@ -22,10 +22,8 @@ public class FloorlistActivity extends ActionBarActivity {
     private String[] floorList = {"B1，地铁、地下停车场入站口",
             "F1, 到达大厅","F2, 出发大厅"};
     protected void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
+         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pointlist);
-        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        this.getSupportActionBar().setHomeButtonEnabled(true);
 
         //ListView显示不同的楼层
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
@@ -41,7 +39,7 @@ public class FloorlistActivity extends ActionBarActivity {
                 Intent intent = new Intent(FloorlistActivity.this,
                         PointlistActivity.class);
                 intent.putExtra("floor",position);
-                startActivityForResult(intent,1);
+                startActivityForResult(intent   ,1);
             }
         });
     }

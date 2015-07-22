@@ -38,23 +38,36 @@ public class NavActivity extends ActionBarActivity{
     private Button mLocateBtn;
     private Button mAddPointBtn;
     private ListView mListView;
+    private PointAdapter pointadapter;
     private List<Point>  chosePointList = new ArrayList<Point>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acitivity_nav);
-        PointAdapter pointadapter = new PointAdapter(this,
+
+        //地点列表
+        pointadapter = new PointAdapter(this,
                 R.layout.point_item,chosePointList);
         mListView = (ListView) findViewById(R.id.chosepoint_list);
         mListView.setAdapter(pointadapter);
-
+        //导航地点添加按钮
         mAddPointBtn = (Button) findViewById(R.id.addpoint_btn);
         mAddPointBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(NavActivity.this,FloorlistActivity.class);
                 startActivityForResult(intent,1);
+            }
+        });
+
+
+        //自动定位按钮
+        mLocateBtn = (Button) findViewById(R.id.locate_btn);
+        mLocateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GetLocationWithHttpURLConnection();
             }
         });
     }
@@ -68,11 +81,12 @@ public class NavActivity extends ActionBarActivity{
                 if(resultCode == RESULT_OK){
                     Point point = (Point)data.getSerializableExtra("point");
                     chosePointList.add(point);
+                    pointadapter.notifyDataSetChanged();
                 }
         }
     }
 
-    private void GetLocationWithHttpURLConnection(Point point){
+    private void GetLocationWithHttpURLConnection(){
         //读取从定位接口得到的json格式数据，并修改起点信息
         new Thread(new Runnable() {
             @Override
@@ -132,7 +146,7 @@ public class NavActivity extends ActionBarActivity{
             double x = jsonArray.getDouble(0);
             double y = jsonArray.getDouble(1);
             int z = jsonArray.getInt(2);
-            chosePointList.get(0).setName("???λ??");
+            chosePointList.get(0).setName("我的位置");
             chosePointList.get(0).setX(x);
             chosePointList.get(0).setY(y);
             chosePointList.get(0).setZ(z);
