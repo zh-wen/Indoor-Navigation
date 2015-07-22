@@ -4,8 +4,10 @@ import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.widget.Button;
+import android.widget.ListView;
 
 import com.indoor_navigation.R;
+import com.indoor_navigation.adapter.PointAdapter;
 import com.indoor_navigation.model.Point;
 
 import org.apache.http.HttpEntity;
@@ -33,14 +35,18 @@ public class NavActivity extends ActionBarActivity{
     private Button mMicBtn;
     private Button mLocateBtn;
     private Button mListBtn;
-
+    private ListView mListView;
     private List<Point>  chosePointList = new ArrayList<Point>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acitivity_nav);
 
-
+        PointAdapter pointadapter = new PointAdapter(this,
+                R.layout.point_item,chosePointList);
+        mListView = (ListView) findViewById(R.id.chosepoint_list);
+        mListView.setAdapter(pointadapter);
     }
 
 
