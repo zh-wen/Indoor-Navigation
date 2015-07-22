@@ -1,11 +1,16 @@
 package com.indoor_navigation.Activity;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.indoor_navigation.R;
@@ -21,9 +26,12 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,18 +48,61 @@ public class NavActivity extends ActionBarActivity{
     private ListView mListView;
     private PointAdapter pointadapter;
     private List<Point>  chosePointList = new ArrayList<Point>();
+    private int item_position = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acitivity_nav);
 
-        //µØµãÁĞ±í
+        //åœ°ç‚¹åˆ—è¡¨
         pointadapter = new PointAdapter(this,
                 R.layout.point_item,chosePointList);
         mListView = (ListView) findViewById(R.id.chosepoint_list);
         mListView.setAdapter(pointadapter);
-        //µ¼º½µØµãÌí¼Ó°´Å¥
+
+        //è®¾ç½®listviewå•å‡»ä¿®æ”¹åœ°ç‚¹
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(NavActivity.this,FloorlistActivity.class);
+                item_position = position;
+                startActivityForResult(intent,2);
+            }
+        });
+
+        //è®¾ç½®listviewé•¿æŒ‰åˆ é™¤
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                new AlertDialog.Builder(NavActivity.this).setTitle("æ˜¯å¦åˆ é™¤è¯¥åœ°ç‚¹")
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .setPositiveButton("ç¡®å®š", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        chosePointList.remove(position);
+                                        pointadapter.notifyDataSetChanged();
+                                    }
+                                }
+
+                        )
+                        .
+
+                                setNegativeButton("å–æ¶ˆ",new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick (DialogInterface dialog,int which){
+                                                dialog.cancel();
+                                            }
+                                        }
+
+                                ).
+
+                        show();
+                return true;
+            }
+        });
+
+        //å¯¼èˆªåœ°ç‚¹æ·»åŠ æŒ‰é’®
         mAddPointBtn = (Button) findViewById(R.id.addpoint_btn);
         mAddPointBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,7 +113,7 @@ public class NavActivity extends ActionBarActivity{
         });
 
 
-        //×Ô¶¯¶¨Î»°´Å¥
+        //è‡ªåŠ¨å®šä½æŒ‰é’®
         mLocateBtn = (Button) findViewById(R.id.locate_btn);
         mLocateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,22 +128,30 @@ public class NavActivity extends ActionBarActivity{
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
             case 1:
-                //½«Ñ¡ÔñµÄµã·µ»Ø¸øÉÏÒ»¸öactivity
+                //å°†é€‰æ‹©çš„ç‚¹è¿”å›ç»™ä¸Šä¸€ä¸ªactivity
                 if(resultCode == RESULT_OK){
                     Point point = (Point)data.getSerializableExtra("point");
                     chosePointList.add(point);
                     pointadapter.notifyDataSetChanged();
                 }
+                break;
+            case 2:
+                if(resultCode == RESULT_OK){
+                    Point point = (Point)data.getSerializableExtra("point");
+                    chosePointList.set(item_position,point);
+                    pointadapter.notifyDataSetChanged();
+                }
+                break;
         }
     }
 
     private void GetLocationWithHttpURLConnection(){
-        //¶ÁÈ¡´Ó¶¨Î»½Ó¿ÚµÃµ½µÄjson¸ñÊ½Êı¾İ£¬²¢ĞŞ¸ÄÆğµãĞÅÏ¢
+        //è¯»å–ä»å®šä½æ¥å£å¾—åˆ°çš„jsonæ ¼å¼æ•°æ®ï¼Œå¹¶ä¿®æ”¹èµ·ç‚¹ä¿¡æ¯
         new Thread(new Runnable() {
             @Override
             public void run() {
                 String UrlString;
-                //¶ÁÈ¡URLµØÖ·
+                //è¯»å–URLåœ°å€
                 try {
                     FileInputStream in = null;
                     BufferedReader reader = null;
@@ -117,16 +176,16 @@ public class NavActivity extends ActionBarActivity{
                     }
 
                     UrlString = content.toString();
-                    //Ê¹ÓÃHttpClient·½Ê½µÃµ½½Ó¿ÚÊı¾İ
+                    //ä½¿ç”¨HttpClientæ–¹å¼å¾—åˆ°æ¥å£æ•°æ®
                     HttpClient httpClient = new DefaultHttpClient();
 
                     HttpGet httpGet = new HttpGet(UrlString);
                     HttpResponse httpResponse = httpClient.execute(httpGet);
                     if(httpResponse.getStatusLine().getStatusCode() == 200){
-                        //ÇëÇóºÍÏàÓ¦¶¼³É¹¦ÁË
+                        //è¯·æ±‚å’Œç›¸åº”éƒ½æˆåŠŸäº†
                         HttpEntity entity = httpResponse.getEntity();
                         String response = EntityUtils.toString(entity, "utf-8");
-                        //´¦Àíjson¸ñÊ½Êı¾İ
+                        //å¤„ç†jsonæ ¼å¼æ•°æ®
                         GetLocationInfo(response);
                     }
                 } catch (Exception e) {
@@ -140,13 +199,13 @@ public class NavActivity extends ActionBarActivity{
     }
 
     private void GetLocationInfo(String jsonData){
-        //¶ÁÈ¡´Ó¶¨Î»½Ó¿ÚµÃµ½µÄjson¸ñÊ½Êı¾İ£¬²¢ĞŞ¸ÄÆğµãĞÅÏ¢
+        //è¯»å–ä»å®šä½æ¥å£å¾—åˆ°çš„jsonæ ¼å¼æ•°æ®ï¼Œå¹¶ä¿®æ”¹èµ·ç‚¹ä¿¡æ¯
         try{
             JSONArray jsonArray = new JSONArray(jsonData);
             double x = jsonArray.getDouble(0);
             double y = jsonArray.getDouble(1);
             int z = jsonArray.getInt(2);
-            chosePointList.get(0).setName("ÎÒµÄÎ»ÖÃ");
+            chosePointList.get(0).setName("æˆ‘çš„ä½ç½®");
             chosePointList.get(0).setX(x);
             chosePointList.get(0).setY(y);
             chosePointList.get(0).setZ(z);
