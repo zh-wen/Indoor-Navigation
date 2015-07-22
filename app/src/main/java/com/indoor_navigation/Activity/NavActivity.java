@@ -20,6 +20,8 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by 志豪 on 2015/7/21.
@@ -32,6 +34,7 @@ public class NavActivity extends ActionBarActivity{
     private Button mLocateBtn;
     private Button mListBtn;
 
+    private List<Point>  chosePointList = new ArrayList<Point>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,10 +104,11 @@ public class NavActivity extends ActionBarActivity{
             JSONArray jsonArray = new JSONArray(jsonData);
             double x = jsonArray.getDouble(0);
             double y = jsonArray.getDouble(1);
-            origin.setName("我的位置");
-            origin.setX(x);
-            origin.setY(y);
-            origin.setZ(jsonArray.getInt(2));
+            int z = jsonArray.getInt(2);
+            chosePointList.get(0).setName("我的位置");
+            chosePointList.get(0).setX(x);
+            chosePointList.get(0).setY(y);
+            chosePointList.get(0).setZ(z);
 
         }catch (Exception e){
             e.printStackTrace();
