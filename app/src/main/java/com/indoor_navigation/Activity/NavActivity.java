@@ -47,7 +47,7 @@ public class NavActivity extends ActionBarActivity{
     private Button mAddPointBtn;
     private ListView mListView;
     private PointAdapter pointadapter;
-    private List<Point>  chosePointList = new ArrayList<Point>();
+    private ArrayList<Point>  chosePointList = new ArrayList<Point>();
     private int item_position = 0;
 
     @Override
@@ -137,7 +137,7 @@ public class NavActivity extends ActionBarActivity{
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(NavActivity.this,MapActivity.class);
-                intent.putParcelableArrayListExtra()
+                intent.putExtra("chosepointlist",chosePointList);
             }
         });
     }

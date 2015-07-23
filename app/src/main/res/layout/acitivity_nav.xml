@@ -55,8 +55,8 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/camera_btn"
             android:layout_alignParentBottom="true"
-            android:layout_toLeftOf="@+id/list_btn"
-            android:layout_toStartOf="@+id/list_btn">
+            android:layout_toStartOf="@+id/locate_btn"
+            android:layout_toLeftOf="@+id/locate_btn">
         </ListView>
 
         <Button
@@ -66,10 +66,7 @@
             android:layout_alignParentTop="true"
             android:background="@drawable/orgin"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_above="@+id/list_btn"
-            android:layout_toRightOf="@+id/chosedpoint_list_btn"
-            android:layout_toEndOf="@+id/chosedpoint_list_btn" />
+            android:layout_alignParentEnd="true" />
 
         <Button
             android:id="@+id/addpoint_btn"
@@ -78,7 +75,8 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:background="@drawable/list" />
+            android:background="@drawable/add"
+/>
 
     </RelativeLayout>
 
