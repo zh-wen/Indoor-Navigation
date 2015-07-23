@@ -2,43 +2,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/accent_material_light">
-
+    android:background="@drawable/nav_background">
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.5">
+        android:layout_height="wrap_content">
+
         <Button
             android:id="@+id/back_btn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/abc_ic_ab_back_mtrl_am_alpha"
-            android:layout_alignBottom="@+id/go_btn" />
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignBottom="@+id/go_btn"
+            android:background="@drawable/btn_back" />
 
         <Button
             android:id="@+id/go_btn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_alignParentEnd="true"
-            android:background="@drawable/go" />
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/btn_go" />
     </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#FFFFFF" />
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="2">
+        android:layout_weight="1.8">
 
         <Button
             android:id="@+id/camera_btn"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:background="@drawable/camera"
-            android:layout_above="@+id/mic_btn"
-            android:layout_alignRight="@+id/mic_btn"
-            android:layout_alignEnd="@+id/mic_btn" />
+            android:background="@drawable/btn_camera"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
 
         <Button
             android:id="@+id/mic_btn"
@@ -47,50 +51,68 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:background="@drawable/mic" />
+            android:background="@drawable/btn_mic" />
 
         <ListView
             android:id="@+id/chosepoint_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="false"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:layout_toLeftOf="@+id/locate_btn"
             android:layout_toRightOf="@+id/camera_btn"
-            android:layout_alignParentBottom="true"
-            android:layout_toStartOf="@+id/locate_btn"
-            android:layout_toLeftOf="@+id/locate_btn">
+            android:layout_toStartOf="@+id/locate_btn" >
         </ListView>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/chosepoint_list"
+            android:background="#FFFFFF" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/chosepoint_list"
+            android:background="#FFFFFF" />
 
         <Button
             android:id="@+id/locate_btn"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_alignParentTop="true"
-            android:background="@drawable/orgin"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentTop="true"
+            android:background="@drawable/btn_origin" />
 
         <Button
             android:id="@+id/addpoint_btn"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:background="@drawable/add"
-/>
-
+            android:layout_alignParentRight="true"
+            android:background="@drawable/btn_add" />
     </RelativeLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#FFFFFF" />
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="6">
+        android:layout_weight="6"
+        android:background="#994433" >
 
         <WebView
-            android:id="@+id/webview"
+            android:id="@+id/pointSetWebView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
+            android:layout_height="match_parent"
+            android:clickable="true">
         </WebView>
     </LinearLayout>
+
 </LinearLayout>

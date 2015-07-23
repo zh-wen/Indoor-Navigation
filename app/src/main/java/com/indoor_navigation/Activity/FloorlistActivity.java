@@ -19,8 +19,8 @@ import com.indoor_navigation.model.Point;
  */
 public class FloorlistActivity extends ActionBarActivity {
     private Point point = new Point();
-    private String[] floorList = {"B1，地铁、地下停车场入站口",
-            "F1, 到达大厅","F2, 出发大厅"};
+    private String[] floorList = {"B1,地铁、地下停车场入站口",
+            "F1,到达大厅","F2,出发大厅"};
     protected void onCreate(Bundle savedInstanceState){
          super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pointlist);

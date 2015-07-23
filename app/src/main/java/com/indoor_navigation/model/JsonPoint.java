@@ -1,23 +1,13 @@
 package com.indoor_navigation.model;
 
-import java.io.Serializable;
-
 /**
- * Created by Ö¾ºÀ on 2015/7/22.
+ * Created by Ö¾ºÀ on 2015/7/23.
  */
-public class Point implements Serializable {
-    private String name;
+public class JsonPoint {
+
     private String x;
     private String y;
-    private String z;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    private String z ;
 
     public String getX() {
         return x;

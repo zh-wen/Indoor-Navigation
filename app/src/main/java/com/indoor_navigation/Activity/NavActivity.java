@@ -6,8 +6,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -46,9 +52,11 @@ public class NavActivity extends ActionBarActivity{
     private Button mLocateBtn;
     private Button mAddPointBtn;
     private ListView mListView;
+    private WebView  mPointSetWebView;
     private PointAdapter pointadapter;
     private ArrayList<Point>  chosePointList = new ArrayList<Point>();
     private int item_position = 0;
+    public static final int DATA_CHANGE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +73,9 @@ public class NavActivity extends ActionBarActivity{
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(NavActivity.this,FloorlistActivity.class);
+                Intent intent = new Intent(NavActivity.this, FloorlistActivity.class);
                 item_position = position;
-                startActivityForResult(intent,2);
+                startActivityForResult(intent, 2);
             }
         });
 
@@ -84,10 +92,8 @@ public class NavActivity extends ActionBarActivity{
                                         pointadapter.notifyDataSetChanged();
                                     }
                                 }
-
                         )
                         .
-
                                 setNegativeButton("取消", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
@@ -107,7 +113,7 @@ public class NavActivity extends ActionBarActivity{
         mAddPointBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(NavActivity.this,FloorlistActivity.class);
+                Intent intent = new Intent(NavActivity.this, FloorlistActivity.class);
                 startActivityForResult(intent, 1);
             }
         });
@@ -132,15 +138,29 @@ public class NavActivity extends ActionBarActivity{
         });
 
         //设置导航按钮
-        mNavigateBtn = (Button)findViewById(R.id.navigation_btn);
+        mNavigateBtn = (Button)findViewById(R.id.go_btn);
         mNavigateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(NavActivity.this,MapActivity.class);
-                intent.putExtra("chosepointlist",chosePointList);
+                Intent intent = new Intent(NavActivity.this, MapActivity.class);
+                intent.putExtra("chosepointlist", chosePointList);
+                startActivity(intent);
             }
         });
+
+        //PointSetWebView，用于地图选点
+        mPointSetWebView = (WebView)findViewById(R.id.pointSetWebView);
+        mPointSetWebView = (WebView)findViewById(R.id.MapWebView);
+        WebSettings webSettings = mPointSetWebView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        //在js中调用本地java方法
+        mPointSetWebView.addJavascriptInterface(new JsInterface(this), "AndroidWebView");
+
+        //添加客户端支持
+        mPointSetWebView.setWebChromeClient(new WebChromeClient());
+        mPointSetWebView.loadUrl("file:///android_asset/WebMap/select-point-map/select-point-map.html");
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -163,6 +183,21 @@ public class NavActivity extends ActionBarActivity{
                 break;
         }
     }
+
+    private Handler handler = new Handler(){
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case DATA_CHANGE:
+                    pointadapter.notifyDataSetChanged();
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
     private void GetLocationWithHttpURLConnection(){
         //读取从定位接口得到的json格式数据，并修改起点信息
@@ -221,16 +256,45 @@ public class NavActivity extends ActionBarActivity{
         //读取从定位接口得到的json格式数据，并修改起点信息
         try{
             JSONArray jsonArray = new JSONArray(jsonData);
-            double x = jsonArray.getDouble(0);
-            double y = jsonArray.getDouble(1);
+            double x =  (520.0 * jsonArray.getDouble(0));
+            double y =  (520.0 * jsonArray.getDouble(1));
             int z = jsonArray.getInt(2);
-            chosePointList.get(0).setName("我的位置");
-            chosePointList.get(0).setX(x);
-            chosePointList.get(0).setY(y);
-            chosePointList.get(0).setZ(z);
+            Point point = new Point();
+            point.setName("我的位置");
+            point.setX(Double.toString(x));
+            point.setY(Double.toString(y));
+            point.setZ(Integer.toString(z));
+            chosePointList.add(point);
+            Message message = new Message();
+            message.what = DATA_CHANGE;
+            handler.sendMessage(message);
 
         }catch (Exception e){
             e.printStackTrace();
+        }
+    }
+
+
+    private class JsInterface {
+        private Context mContext;
+
+        public JsInterface(Context context) {
+            this.mContext = context;
+        }
+
+        //在js中调用window.AndroidWebView.addPointByTouchMap(name)，便会触发此方法。
+        @JavascriptInterface
+        private void addPointByTouchMap(String index,String x,String y, String z)
+        {
+            Point point = new Point();
+            point.setName("地图选点" + index);
+            point.setX(x);
+            point.setY(y);
+            point.setZ(z);
+            chosePointList.add(point);
+            Message message = new Message();
+            message.what = DATA_CHANGE;
+            handler.sendMessage(message);
         }
     }
 }
