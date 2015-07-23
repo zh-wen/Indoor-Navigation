@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * Created by Ö¾             ºÀ on 2015/7/23.
+ * Created by å¿—             è±ª on 2015/7/23.
  */
 public class MapActivity extends ActionBarActivity {
     private ArrayList<Point> chosePointList = null;
@@ -34,23 +34,24 @@ public class MapActivity extends ActionBarActivity {
     private String  jsonString = null;
     private String  GeolocationUrl = null;
     private WebView mMapWebView ;
+    private Boolean IsNavigation;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        //»ñÈ¡µØµãÁĞ±í
+        //è·å–åœ°ç‚¹åˆ—è¡¨
         Intent intent = getIntent();
         chosePointList = (ArrayList<Point>) intent.getSerializableExtra("chosepointlist");
-        //×ª»»µØµãÊı¾İÀàĞÍ
+        IsNavigation = intent.getBooleanExtra("isnavigation",false);
+        Log.e("IsNavigation",IsNavigation.toString());
+        //è½¬æ¢åœ°ç‚¹æ•°æ®ç±»å‹
         jsonPointsList = toJsonPoint(chosePointList);
-        //»ñµÃjsonString
+        //è·å¾—jsonString
         jsonString = toJsonString(jsonPointsList);
-        Log.e("JSON",jsonString);
-        Toast toast= Toast.makeText(getApplicationContext(), jsonString.toString(), Toast.LENGTH_SHORT);
-        toast.show();
+        Log.e("JSON", jsonString);
 
         GeolocationUrl = getURL();
-        //WebView ÓÃÓÚÏÔÊ¾µØÍ¼
+        //WebView ç”¨äºæ˜¾ç¤ºåœ°å›¾
         mMapWebView = (WebView)findViewById(R.id.MapWebView);
         WebSettings webSettings = mMapWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -62,7 +63,7 @@ public class MapActivity extends ActionBarActivity {
                     public void onPageFinished(WebView view, String url) {
                         super.onPageFinished(view, url);
                         mMapWebView.loadUrl("javascript: setGeolocationUrl('" + GeolocationUrl + "')");
-                        mMapWebView.loadUrl("javascript: setEnableRerouting(true)");
+                        mMapWebView.loadUrl("javascript: setEnableRerouting("+ IsNavigation.toString() +")");
                         mMapWebView.loadUrl("javascript: setDestJSON('"+ jsonString +"')");
                         mMapWebView.loadUrl("javascript: startRouting()");
                     }

@@ -10,6 +10,8 @@ public class Point implements Serializable {
     private String x;
     private String y;
     private String z;
+    private String id;
+    private int origin;
 
     public String getName() {
         return name;
@@ -41,5 +43,21 @@ public class Point implements Serializable {
 
     public void setZ(String z) {
         this.z = z;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(int origin) {
+        this.origin = origin;
     }
 }

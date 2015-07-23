@@ -19,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -94,6 +95,13 @@ public class PointlistActivity extends ActionBarActivity {
             pointList = gson.fromJson(jsonData, new
                     TypeToken<List<Point>>() {
                     }.getType());
+
+
+            //设置点的origin属性为0说明地点信息来源于文件
+            for(int i=0;i < pointList.size();i++)
+            {
+                pointList.get(i).setOrigin(0);
+            }
 
         }catch (IOException e){
             e.printStackTrace();

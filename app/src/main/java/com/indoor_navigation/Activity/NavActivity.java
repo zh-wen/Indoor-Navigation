@@ -1,6 +1,6 @@
 package com.indoor_navigation.Activity;
 
-import android.app.ActionBar;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,7 +16,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 
 import com.indoor_navigation.R;
@@ -32,17 +31,16 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.List;
+
 
 /**
- * Created by ??? on 2015/7/21.
+ * Created by zh.wen on 2015/7/21.
+ *    若起点是我的位置，即通过定位接口得到的地点信息，则进行导航，有导航纠正功能
+ *    否则进行路径规划,导航时路径纠偏功能关闭。
  */
 public class NavActivity extends ActionBarActivity{
     private Button mBackBtn;
@@ -88,8 +86,14 @@ public class NavActivity extends ActionBarActivity{
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
+                                        if(2 == chosePointList.get(position).getOrigin()){
+                                            String index = chosePointList.get(position).getId();
+                                            String floor = chosePointList.get(position).getZ();
+                                            mPointSetWebView.loadUrl("javascript: deleteMarker('"+floor+"','" + index + "')");
+                                        }
                                         chosePointList.remove(position);
                                         pointadapter.notifyDataSetChanged();
+
                                     }
                                 }
                         )
@@ -144,13 +148,22 @@ public class NavActivity extends ActionBarActivity{
             public void onClick(View v) {
                 Intent intent = new Intent(NavActivity.this, MapActivity.class);
                 intent.putExtra("chosepointlist", chosePointList);
+
+                //若起点是我的位置，即通过定位接口得到的地点信息，则进行导航，有导航纠正功能
+                //否则进行路径规划,导航时路径纠偏功能关闭。
+                Boolean IsNavigation;
+                if(chosePointList.get(0).getOrigin()==1){
+                    IsNavigation = true;
+                }else {
+                    IsNavigation = false;
+                }
+                intent.putExtra("isnavigation",IsNavigation);
                 startActivity(intent);
             }
         });
 
         //PointSetWebView，用于地图选点
         mPointSetWebView = (WebView)findViewById(R.id.pointSetWebView);
-        mPointSetWebView = (WebView)findViewById(R.id.MapWebView);
         WebSettings webSettings = mPointSetWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         //在js中调用本地java方法
@@ -184,6 +197,7 @@ public class NavActivity extends ActionBarActivity{
         }
     }
 
+    //Handler用于list更改后，更改ListView
     private Handler handler = new Handler(){
 
         @Override
@@ -264,6 +278,7 @@ public class NavActivity extends ActionBarActivity{
             point.setX(Double.toString(x));
             point.setY(Double.toString(y));
             point.setZ(Integer.toString(z));
+            point.setOrigin(1);       //设置origin属性为1，说明地点信息来源于定位接口
             chosePointList.add(point);
             Message message = new Message();
             message.what = DATA_CHANGE;
@@ -284,10 +299,12 @@ public class NavActivity extends ActionBarActivity{
 
         //在js中调用window.AndroidWebView.addPointByTouchMap(name)，便会触发此方法。
         @JavascriptInterface
-        private void addPointByTouchMap(String index,String x,String y, String z)
+        public void addPointByTouchMap(String index,String x,String y, String z)
         {
             Point point = new Point();
             point.setName("地图选点" + index);
+            point.setId(index);
+            point.setOrigin(2);  //设置点的origin为2,说明地点信息来源于地图取点
             point.setX(x);
             point.setY(y);
             point.setZ(z);

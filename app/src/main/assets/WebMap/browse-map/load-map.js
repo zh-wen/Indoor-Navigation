@@ -142,27 +142,23 @@ document.addEventListener('DOMContentLoaded', function() {
   FastClick.attach(document.body);
 });
 
-function setCurrentFloor(floor) {
-	switch (currentFloor) {
-		case 0:
-			mapLayerB1.setVisible(false);
-			break;
-		case 1:
-			mapLayerF1.setVisible(false);
-			break;
-		case 2:
-			mapLayerF2.setVisible(false);
-			break;
-	}
+function setCurrentFloor(floor)
+{
 	currentFloor = floor;
 	switch (currentFloor) {
 		case 0:
 			mapLayerB1.setVisible(true);
+			mapLayerF1.setVisible(false);
+			mapLayerF2.setVisible(false);
 			break;
 		case 1:
+			mapLayerB1.setVisible(false);
 			mapLayerF1.setVisible(true);
+			mapLayerF2.setVisible(false);
 			break;
 		case 2:
+			mapLayerB1.setVisible(false);
+			mapLayerF1.setVisible(false);
 			mapLayerF2.setVisible(true);
 			break;
 	}
